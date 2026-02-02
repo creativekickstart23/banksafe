@@ -1,16 +1,16 @@
 package com.edutech.progressive.dto;
- 
+
 public class CustomerAccountInfo {
- 
+
     private int customerId;
     private String customerName;
     private String email;
     private int accountId;
     private double balance;
- 
     public CustomerAccountInfo(){
- 
+
     }
+    
     public CustomerAccountInfo(int customerId, String customerName, String email, int accountId, double balance) {
         this.customerId = customerId;
         this.customerName = customerName;
@@ -48,13 +48,10 @@ public class CustomerAccountInfo {
     public void setBalance(double balance) {
         this.balance = balance;
     }
+
     @Override
     public String toString() {
         return "CustomerAccountInfo [customerId=" + customerId + ", customerName=" + customerName + ", email=" + email
                 + ", accountId=" + accountId + ", balance=" + balance + "]";
     }
- 
-    
- 
-    
 }
