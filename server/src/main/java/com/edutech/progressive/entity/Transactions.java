@@ -1,4 +1,5 @@
 package com.edutech.progressive.entity;
+
 import java.util.Date;
 
 public class Transactions {
@@ -7,8 +8,10 @@ public class Transactions {
     private double amount;
     private String transactionType;
     private Date transactionDate;
+
     public Transactions() {
     }
+
     public Transactions(int transactionId, int accountId, double amount, String transactionType, Date transactionDate) {
         this.transactionId = transactionId;
         this.accountId = accountId;
@@ -16,9 +19,17 @@ public class Transactions {
         this.transactionType = transactionType;
         this.transactionDate = transactionDate;
     }
-    public Transactions(int int1, int int2, double double1, java.sql.Date date, String string) {
-        //TODO Auto-generated constructor stub
+
+    // Added: match tests that pass java.util.Date then String
+    public Transactions(int transactionId, int accountId, double amount, Date transactionDate, String transactionType) {
+        this(transactionId, accountId, amount, transactionType, transactionDate);
     }
+
+    // Implemented: constructor that accepts java.sql.Date
+    public Transactions(int transactionId, int accountId, double amount, java.sql.Date date, String transactionType) {
+        this(transactionId, accountId, amount, transactionType, new Date(date.getTime()));
+    }
+
     public int getTransactionId() {
         return transactionId;
     }
@@ -49,5 +60,4 @@ public class Transactions {
     public void setTransactionDate(Date transactionDate) {
         this.transactionDate = transactionDate;
     }
-
 }
