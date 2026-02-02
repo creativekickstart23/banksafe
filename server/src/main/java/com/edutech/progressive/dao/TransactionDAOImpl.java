@@ -1,109 +1,120 @@
 package com.edutech.progressive.dao;
-
+ 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+import java.util.ArrayList;
+import java.util.List;
+ 
 import com.edutech.progressive.config.DatabaseConnectionManager;
+ 
 import com.edutech.progressive.entity.Transactions;
-
-public class TransactionDAOImpl implements TransactionDAO {
-
+ 
+public class TransactionDAOImpl implements TransactionDAO{
+ 
     private Connection connection;
-
-    public TransactionDAOImpl() {
+ 
+    public TransactionDAOImpl(){
         try {
-            this.connection = DatabaseConnectionManager.getConnection();
+            connection = DatabaseConnectionManager.getConnection();
         } catch (SQLException e) {
+            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
     @Override
-    public int addTransaction(Transactions transaction) throws SQLException {
-        String sql = "INSERT INTO transactions(account_id, amount, type, date) VALUES (?, ?, ?, ?)";
-        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, transaction.getAccountId());
-            ps.setDouble(2, transaction.getAmount());
-            ps.setString(3, transaction.getTransactionType());
-            if (transaction.getTransactionDate() != null) {
-                ps.setDate(4, new Date(transaction.getTransactionDate().getTime()));
-            } else {
-                ps.setDate(4, null);
-            }
+    public int addTransaction(Transactions transaction) throws SQLException{
+        String sql ="INSERT INTO transactions(account_id,amount,transaction_date,transaction_type) VALUES(?,?,?,?)";
+ 
+        try(PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS)){
+            ps.setInt(1,transaction.getAccountId());
+            ps.setDouble(2,transaction.getAmount());
+ 
+            java.util.Date utilDate = transaction.getTransactionDate();
+ 
+            ps.setDate(3, new java.sql.Date(utilDate.getTime()));
+            ps.setString(4,transaction.getTransactionType());
             ps.executeUpdate();
-            try (ResultSet rs = ps.getGeneratedKeys()) {
-                if (rs.next()) {
-                    int id = rs.getInt(1);
-                    transaction.setId(id);
-                    return id;
+ 
+            ResultSet rs = ps.getGeneratedKeys();
+ 
+            if(rs.next()){
+                transaction.setTransactionId(rs.getInt(1));
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return transaction.getTransactionId();
+    }
+ 
+    @Override
+    public Transactions getTransactionById(int transactionId)throws SQLException {
+        Transactions transactions = null;
+        String sql = "Select * from transactions where transaction_id=?";
+ 
+        try(PreparedStatement ps = connection.prepareStatement(sql)){
+            ps.setInt(1,transactionId);
+ 
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                transactions = new Transactions(rs.getInt("transaction_id"), rs.getInt("account_id"), rs.getDouble("amount"), rs.getDate("transaction_date"), rs.getString("transaction_type"));
+            }
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+        return transactions;
+    }
+
+    @Override
+    public void updateTransaction(Transactions transaction) throws SQLException{
+        String sql = "UPDATE transactions set amount=?,transaction_date=?,transaction_type=? where transaction_id=?";
+ 
+        try(PreparedStatement ps = connection.prepareStatement(sql)){
+                //ps.setInt(1, transaction.getAccountId());
+                ps.setDouble(1, transaction.getAmount());
+                java.util.Date utilDate = transaction.getTransactionDate();
+                ps.setDate(2, new java.sql.Date(utilDate.getTime()));
+                ps.setString(3, transaction.getTransactionType());
+                ps.setInt(4,transaction.getTransactionId());
+                ps.executeUpdate();
+        }catch(SQLException e){
+                e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void deleteTransaction(int transactionId) throws SQLException{
+        String sql = "DELETE from transactions where transaction_id=?";
+ 
+        try(PreparedStatement ps = connection.prepareStatement(sql)){
+            ps.setInt(1,transactionId);
+            ps.executeUpdate();
+        }catch(SQLException e){
+            e.printStackTrace();
+        }
+    }
+ 
+    @Override
+    public List<Transactions> getAllTransactions() throws SQLException {
+        List<Transactions> transactionList = new ArrayList<>();
+ 
+        String sql = "Select * from transactions";
+ 
+        try(PreparedStatement ps = connection.prepareStatement(sql)){
+                ResultSet rs = ps.executeQuery();
+ 
+                while(rs.next()){
+                    Transactions transaction = new Transactions(rs.getInt("transaction_id"), rs.getInt("account_id"), rs.getDouble("amount"), rs.getDate("transaction_date"), rs.getString("transaction_type"));
+                    transactionList.add(transaction);
                 }
-            }
-        } catch (SQLException e) {
+        }catch(SQLException e){
             e.printStackTrace();
-            throw e;
         }
-        return transaction.getId();
+        return transactionList;
     }
-
-    @Override
-    public Transactions getTransactionById(int id) throws SQLException {
-        String sql = "SELECT * FROM transactions WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    Transactions t = new Transactions();
-                    t.setId(rs.getInt("id"));
-                    t.setAccountId(rs.getInt("account_id"));
-                    t.setAmount(rs.getDouble("amount"));
-                    t.setTransactionType(rs.getString("type"));
-                    Date d = rs.getDate("date");
-                    if (d != null) {
-                        t.setTransactionDate(new java.util.Date(d.getTime()));
-                    }
-                    return t;
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-        return null;
-    }
-
-    @Override
-    public void updateTransaction(Transactions transaction) throws SQLException {
-        String sql = "UPDATE transactions SET account_id = ?, amount = ?, type = ?, date = ? WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, transaction.getAccountId());
-            ps.setDouble(2, transaction.getAmount());
-            ps.setString(3, transaction.getTransactionType());
-            if (transaction.getTransactionDate() != null) {
-                ps.setDate(4, new Date(transaction.getTransactionDate().getTime()));
-            } else {
-                ps.setDate(4, null);
-            }
-            ps.setInt(5, transaction.getId());
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
-
-    @Override
-    public void deleteTransaction(int id) throws SQLException {
-        String sql = "DELETE FROM transactions WHERE id = ?";
-        try (PreparedStatement ps = connection.prepareStatement(sql)) {
-            ps.setInt(1, id);
-            ps.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-    }
+ 
+    
 }
