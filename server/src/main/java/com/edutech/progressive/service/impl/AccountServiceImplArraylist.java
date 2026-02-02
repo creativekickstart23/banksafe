@@ -8,8 +8,8 @@ import java.util.List;
 import com.edutech.progressive.entity.Accounts;
 import com.edutech.progressive.service.AccountService;
 
-public class AccountServiceImplArraylist implements AccountService{
-    public static List<Accounts> accountsList=new ArrayList<>();
+public class AccountServiceImplArraylist implements AccountService {
+    public static List<Accounts> accountsList = new ArrayList<>();
 
     @Override
     public List<Accounts> getAllAccounts() throws SQLException {
@@ -19,8 +19,7 @@ public class AccountServiceImplArraylist implements AccountService{
     @Override
     public int addAccount(Accounts accounts) throws SQLException {
         accountsList.add(accounts);
-        int s=accountsList.size();
-        return s;
+        return accountsList.size();
     }
 
     @Override
@@ -29,8 +28,8 @@ public class AccountServiceImplArraylist implements AccountService{
         return accountsList;
     }
 
-    public void emptyArrayList(){
-        accountsList.clear();;
+    @Override
+    public void emptyArrayList() {
+        accountsList.clear();
     }
-
 }
