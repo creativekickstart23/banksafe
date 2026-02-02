@@ -30,25 +30,14 @@ public class AccountServiceImpl implements AccountService{
         return accountDAO.addAccount(accounts);
     }
  
- 
-    ////////did not understand????  /////done
     @Override
     public List<Accounts> getAllAccountsSortedByBalance() throws SQLException {
-            //List<Accounts> list = accountDAO.getAllAccounts();
             accountsList = accountDAO.getAllAccounts();
             Collections.sort(accountsList);
             return accountsList;
     }
  
- 
-    ////////did not understand???? Incomplete
     public List<Accounts> getAccountsByUser(int userId) throws SQLException{
-            // accountsList = accountDAO.getAllAccounts();
-            // for(Accounts a : accountsList){
-            //     if(a.g)
-            // }
- 
-            //return accountDAO.getAllAccountsByCustomers(userId);
             return accountDAO.getAllAccountsByCustomers(userId);
     }
  
@@ -56,7 +45,6 @@ public class AccountServiceImpl implements AccountService{
         Accounts account = accountDAO.getAccountById(accountId);
  
         return account;
-       // return accountDAO.getAccountById(accountId);
     }
  
     public void updateAccount(Accounts accounts)throws SQLException{
