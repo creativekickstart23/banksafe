@@ -26,7 +26,6 @@ public class CustomerDAOImpl implements CustomerDAO{
             e.printStackTrace();
         }
     }
-    /////////////////////done---1
     @Override
     public int addCustomer(Customers customers) throws SQLException{
         String sql = "INSERT INTO customers(name,email,username,password,role) VALUES(?,?,?,?,?)";
@@ -50,8 +49,6 @@ public class CustomerDAOImpl implements CustomerDAO{
         }
         return customers.getCustomerId();
     }
- 
-    //////////////////done
     @Override
     public Customers getCustomerById(int customerId)throws SQLException {
         Customers customer = null;
@@ -69,7 +66,6 @@ public class CustomerDAOImpl implements CustomerDAO{
         return customer;
     }
  
-    /////////////////////done
     @Override
     public void updateCustomer(Customers customers) throws SQLException{
         String sql = "UPDATE customers set name=?,email=?,username=?,password=?,role=? where customer_id=?";
@@ -87,8 +83,6 @@ public class CustomerDAOImpl implements CustomerDAO{
         }
     }
  
- 
-    /////////////////done
     @Override
     public void deleteCustomer(int customerId) throws SQLException{
         String sql = "DELETE from customers where customer_id=?";
@@ -100,9 +94,7 @@ public class CustomerDAOImpl implements CustomerDAO{
             e.printStackTrace();
         }
     }
- 
- 
-    /////////////////done
+
     @Override
     public List<Customers> getAllCustomers()throws SQLException {
         List<Customers> customerList = new ArrayList<>();
@@ -122,8 +114,6 @@ public class CustomerDAOImpl implements CustomerDAO{
         return customerList;
     }
  
- 
-    ///////////////////////will do Later after CustomerAccountInfo class completion ////done
     @Override
     public CustomerAccountInfo getCustomerAccountInfo(int customerId) throws SQLException{
         String sql = "Select c.customer_id,c.name,c.email,a.account_id,a.balance " + "FROM customers c JOIN accounts a ON c.customer_id=a.customer_id " + "Where c.customer_id=?";
