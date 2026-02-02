@@ -18,18 +18,6 @@ public class AccountDAOImpl implements AccountDAO {
  
     private List<Accounts> accountsList = new ArrayList<>();
  
-    // private Connection connection;
- 
-    // public AccountDAOImpl() {
-    //     try {
-    //         this.connection = DatabaseConnectionManager.getConnection();
-    //     } catch (SQLException e) {
-    //         // TODO Auto-generated catch block
-    //         e.printStackTrace();
-    //     }
-    // }
- 
-    ////////////////////done
     @Override
     public int addAccount(Accounts accounts)throws SQLException{
         String sql = "INSERT INTO accounts(customer_id,balance) VALUES(?,?)";
@@ -49,7 +37,6 @@ public class AccountDAOImpl implements AccountDAO {
         return accounts.getAccountId();
     }
  
-    ///////////////////////done
     @Override
     public Accounts getAccountById(int accountId)throws SQLException{
         //Accounts account = null;
@@ -76,7 +63,6 @@ public class AccountDAOImpl implements AccountDAO {
         return null;
     }
  
-    /////////////////done
     @Override
     public void updateAccount(Accounts accounts)throws SQLException {
  
@@ -91,8 +77,7 @@ public class AccountDAOImpl implements AccountDAO {
             e.printStackTrace();
         }
     }   
- 
-    //////////////not given in Day 3 still done
+
     @Override
     public void deleteAccount(int accountId)throws SQLException{
         String sql = "DELETE FROM accounts where account_id=?";
@@ -104,9 +89,6 @@ public class AccountDAOImpl implements AccountDAO {
                 e.printStackTrace();
         }
     }
- 
- 
-    /////////////////////////done
     @Override
     public List<Accounts> getAllAccounts() throws SQLException{
  
@@ -131,9 +113,7 @@ public class AccountDAOImpl implements AccountDAO {
  
         return accounts;
     }
- 
- 
-    ////////////////////done
+
     public List<Accounts> getAllAccountsByCustomers(int customer_id) throws SQLException{
         List<Accounts> accounts = new ArrayList<>();
         String sql = "Select * from accounts where customer_id=?";
