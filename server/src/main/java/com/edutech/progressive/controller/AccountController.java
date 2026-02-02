@@ -1,38 +1,39 @@
 package com.edutech.progressive.controller;
 
-import org.springframework.http.ResponseEntity;
+import java.util.List;
 import org.springframework.web.bind.annotation.*;
 
 import com.edutech.progressive.entity.Accounts;
 
-import java.util.List;
-
-
-
+@RestController
+@RequestMapping("/accounts")
 public class AccountController {
 
-
-    public ResponseEntity<List<Accounts>> getAllAccounts() {
+    @GetMapping
+    public List<Accounts> getAllAccounts() {
         return null;
     }
 
-    public ResponseEntity<Accounts> getAccountById(int accountId) {
+    @GetMapping("/{accountId}")
+    public Accounts getAccountById(@PathVariable int accountId) {
         return null;
     }
 
-    public ResponseEntity<List<Accounts>> getAccountsByUser(String param) {
+    @GetMapping("/user/{param}")
+    public List<Accounts> getAccountsByUser(@PathVariable String param) {
         return null;
     }
 
-    public ResponseEntity<Integer> addAccount(Accounts accounts) {
-        return null;
+    @PostMapping
+    public int addAccount(@RequestBody Accounts accounts) {
+        return -1;
     }
 
-    public ResponseEntity<Void> updateAccount(int accountId, Accounts accounts) {
-        return null;
+    @PutMapping("/{accountId}")
+    public void updateAccount(@PathVariable int accountId, @RequestBody Accounts accounts) {
     }
 
-    public ResponseEntity<Void> deleteAccount(int accountId) {
-        return null;
+    @DeleteMapping("/{accountId}")
+    public void deleteAccount(@PathVariable int accountId) {
     }
 }
