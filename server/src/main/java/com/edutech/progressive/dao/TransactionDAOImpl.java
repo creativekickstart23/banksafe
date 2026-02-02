@@ -10,8 +10,6 @@ import java.util.List;
  
 import com.edutech.progressive.config.DatabaseConnectionManager;
  
-//import org.h2.mvstore.tx.Transaction;
- 
 import com.edutech.progressive.entity.Transactions;
  
 public class TransactionDAOImpl implements TransactionDAO{
@@ -26,8 +24,7 @@ public class TransactionDAOImpl implements TransactionDAO{
             e.printStackTrace();
         }
     }
- 
-    /////////////////////done
+
     @Override
     public int addTransaction(Transactions transaction) throws SQLException{
         String sql ="INSERT INTO transactions(account_id,amount,transaction_date,transaction_type) VALUES(?,?,?,?)";
@@ -53,8 +50,6 @@ public class TransactionDAOImpl implements TransactionDAO{
         return transaction.getTransactionId();
     }
  
- 
-    /////////////////////done
     @Override
     public Transactions getTransactionById(int transactionId)throws SQLException {
         Transactions transactions = null;
@@ -72,8 +67,7 @@ public class TransactionDAOImpl implements TransactionDAO{
         }
         return transactions;
     }
- 
-    ////////////////done
+
     @Override
     public void updateTransaction(Transactions transaction) throws SQLException{
         String sql = "UPDATE transactions set amount=?,transaction_date=?,transaction_type=? where transaction_id=?";
@@ -90,8 +84,7 @@ public class TransactionDAOImpl implements TransactionDAO{
                 e.printStackTrace();
         }
     }
- 
-    /////////////////done
+
     @Override
     public void deleteTransaction(int transactionId) throws SQLException{
         String sql = "DELETE from transactions where transaction_id=?";
@@ -104,8 +97,6 @@ public class TransactionDAOImpl implements TransactionDAO{
         }
     }
  
- 
-    //////////////////////done
     @Override
     public List<Transactions> getAllTransactions() throws SQLException {
         List<Transactions> transactionList = new ArrayList<>();
