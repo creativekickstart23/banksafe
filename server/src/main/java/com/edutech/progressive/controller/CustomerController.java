@@ -1,36 +1,68 @@
 package com.edutech.progressive.controller;
 
+import java.sql.SQLException;
+import java.util.List;
 
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import com.edutech.progressive.entity.Customers;
-import com.edutech.progressive.entity.Transactions;
+import com.edutech.progressive.service.impl.CustomerServiceImplArraylist;
+import com.edutech.progressive.service.impl.CustomerServiceImplJpa;
 
-import java.util.List;
-
+@RestController
+@RequestMapping("/customers")
 public class CustomerController {
 
-    public ResponseEntity<List<Customers>> getAllCustomers() {
-        return null;
+    private final CustomerServiceImplArraylist arraylistService;
+    private final CustomerServiceImplJpa jpaService;
+
+    public CustomerController(CustomerServiceImplArraylist arraylistService,
+                              CustomerServiceImplJpa jpaService) {
+        this.arraylistService = arraylistService;
+        this.jpaService = jpaService;
     }
 
-    public ResponseEntity<Customers> getCustomerById(int customerId) {
-        return null;
+    @GetMapping
+    public List<Customers> getAllCustomers() throws SQLException {
+        return jpaService.getAllCustomers();
     }
 
-    public ResponseEntity<Integer> addCustomer(Customers customers) {
-        return null;
+    @GetMapping("/{customerId}")
+    public Customers getCustomerById(@PathVariable int customerId) throws SQLException {
+        return jpaService.getCustomerById(customerId);
     }
 
-    public ResponseEntity<Void> updateCustomer(int customerId, Customers customers) {
-        return null;
-    }
-    public ResponseEntity<Void> deleteCustomer(int customerId) {
-        return null;
+    @PostMapping
+    public int addCustomer(@RequestBody Customers customers) throws SQLException {
+        return jpaService.addCustomer(customers);
     }
 
-    public ResponseEntity<List<Transactions>> getAllTransactionsByCustomerId(int customerId) {
-        return null;
+    @PutMapping("/{customerId}")
+    public void updateCustomer(@PathVariable int customerId,
+                               @RequestBody Customers customers) throws SQLException {
+        customers.setCustomerId(customerId);
+        jpaService.updateCustomer(customers);
+    }
+
+    @DeleteMapping("/{customerId}")
+    public void deleteCustomer(@PathVariable int customerId) throws SQLException {
+        jpaService.deleteCustomer(customerId);
+    }
+
+    @GetMapping("/fromArrayList")
+    public List<Customers> getAllCustomersFromArrayList() throws SQLException {
+        return arraylistService.getAllCustomers();
+    }
+
+    @GetMapping("/fromArrayList/all")
+    public List<Customers> getAllCustomersSortedByNameFromArrayList() throws SQLException {
+        return arraylistService.getAllCustomersSortedByName();
+    }
+
+    @PostMapping("/toArrayList")
+    @ResponseStatus(HttpStatus.CREATED)
+    public int addCustomerToArrayList(@RequestBody Customers customers) throws SQLException {
+        return arraylistService.addCustomer(customers);
     }
 }
