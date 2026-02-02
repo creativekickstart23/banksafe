@@ -41,9 +41,6 @@ public class TransactionServiceImpl implements TransactionService{
  
         transactionDAO.deleteTransaction(transactionId);
     }   
- 
- 
-    /////////doubt join query
     @Override
     public List<Transactions> getTransactionsByCustomerId(int customerId) throws SQLException {
         return null;
