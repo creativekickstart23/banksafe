@@ -14,10 +14,8 @@ public interface AccountService {
 
     List<Accounts> getAllAccountsSortedByBalance() throws SQLException;
 
-    default public void emptyArrayList() {
+    default  void emptyArrayList() {
     }
-
-    //Do not implement these methods in AccountServiceImplArraylist.java class
     default List<Accounts> getAccountsByUser(int userId) throws SQLException {
         return List.of();
     }
