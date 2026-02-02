@@ -3,27 +3,42 @@ package com.edutech.progressive.config;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
+import java.sql.Statement;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
-
-@Component
 public class DatabaseConnectionManager {
-    private static final Properties properties=new Properties();
 
-    @Autowired
-    public static Environment env;
-    private static void loadProperties(){
-        String url=env.getProperty("spring.datasource.url");
-        String username=env.getProperty("spring.datasource.username");
-        String password=env.getProperty("spring.datasource.password");
-        properties.put("url", url);
-        properties.put("username", username);
-        properties.put("password", password);
+    private static final String URL = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1";
+    private static final String USER = "sa";
+    private static final String PASSWORD = "";
+
+    static {
+        try {
+            Class.forName("org.h2.Driver");
+            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                 Statement stmt = conn.createStatement()) {
+
+                stmt.execute("CREATE TABLE IF NOT EXISTS customers (" +
+                             "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                             "name VARCHAR(255))");
+
+                stmt.execute("CREATE TABLE IF NOT EXISTS accounts (" +
+                             "account_id INT AUTO_INCREMENT PRIMARY KEY, " +
+                             "customer_id INT, " +
+                             "balance DOUBLE)");
+
+                stmt.execute("CREATE TABLE IF NOT EXISTS transactions (" +
+                             "id INT AUTO_INCREMENT PRIMARY KEY, " +
+                             "account_id INT, " +
+                             "amount DOUBLE, " +
+                             "type VARCHAR(50), " +
+                             "date DATE)");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    public static Connection getConnection()throws SQLException{
-        return DriverManager.getConnection((String)properties.get("url"),(String)properties.get("username"),(String) properties.get("password"));
+
+    public static Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 }
