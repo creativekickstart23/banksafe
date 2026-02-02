@@ -7,7 +7,7 @@ import java.sql.Statement;
 
 public class DatabaseConnectionManager {
 
-    private static final String URL = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1";
+    private static final String URL = "jdbc:h2:mem:testdb";
     private static final String USER = "sa";
     private static final String PASSWORD = "";
 
@@ -17,7 +17,11 @@ public class DatabaseConnectionManager {
             try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
                  Statement stmt = conn.createStatement()) {
 
-                stmt.execute("CREATE TABLE IF NOT EXISTS customers (" +
+                stmt.execute("DROP TABLE IF EXISTS transactions");
+                stmt.execute("DROP TABLE IF EXISTS accounts");
+                stmt.execute("DROP TABLE IF EXISTS customers");
+
+                stmt.execute("CREATE TABLE customers (" +
                              "customer_id INT AUTO_INCREMENT PRIMARY KEY, " +
                              "name VARCHAR(255), " +
                              "email VARCHAR(255), " +
@@ -25,12 +29,12 @@ public class DatabaseConnectionManager {
                              "password VARCHAR(255), " +
                              "role VARCHAR(100))");
 
-                stmt.execute("CREATE TABLE IF NOT EXISTS accounts (" +
+                stmt.execute("CREATE TABLE accounts (" +
                              "account_id INT AUTO_INCREMENT PRIMARY KEY, " +
                              "customer_id INT, " +
                              "balance DOUBLE)");
 
-                stmt.execute("CREATE TABLE IF NOT EXISTS transactions (" +
+                stmt.execute("CREATE TABLE transactions (" +
                              "id INT AUTO_INCREMENT PRIMARY KEY, " +
                              "account_id INT, " +
                              "amount DOUBLE, " +
