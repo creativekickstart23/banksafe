@@ -16,6 +16,9 @@ public class Transactions {
         this.transactionType = transactionType;
         this.transactionDate = transactionDate;
     }
+    public Transactions(int int1, int int2, double double1, java.sql.Date date, String string) {
+        //TODO Auto-generated constructor stub
+    }
     public int getTransactionId() {
         return transactionId;
     }
