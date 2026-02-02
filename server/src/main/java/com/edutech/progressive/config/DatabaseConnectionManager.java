@@ -1,48 +1,29 @@
 package com.edutech.progressive.config;
 
+import java.io.InputStream;
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.util.Properties;
 
 public class DatabaseConnectionManager {
 
-    private static final String URL = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1";
-    private static final String USER = "sa";
-    private static final String PASSWORD = "";
+   private static Properties properties = new Properties();
+   private static void loadProperties(){
+      try(InputStream input = DatabaseConnectionManager.class.getClassLoader().getResourceAsStream("application.properties")) {
+         properties.load(input);
+      } catch (Exception e) {
+         e.printStackTrace();
+      }
+   }
+   public static Connection getConnection() throws SQLException{
+      loadProperties();  
+      String url = properties.getProperty("spring.datasource.url");
+      String username =  properties.getProperty("spring.datasource.username");
+      String password = properties.getProperty("spring.datasource.password");
 
-    static {
-        try {
-            Class.forName("org.h2.Driver");
-            try (Connection conn = DriverManager.getConnection(URL, USER, PASSWORD);
-                 Statement stmt = conn.createStatement()) {
-
-                stmt.execute("CREATE TABLE IF NOT EXISTS customers (" +
-                             "customer_id INT AUTO_INCREMENT PRIMARY KEY, " +
-                             "name VARCHAR(255), " +
-                             "email VARCHAR(255), " +
-                             "username VARCHAR(255), " +
-                             "password VARCHAR(255), " +
-                             "role VARCHAR(100))");
-
-                stmt.execute("CREATE TABLE IF NOT EXISTS accounts (" +
-                             "account_id INT AUTO_INCREMENT PRIMARY KEY, " +
-                             "customer_id INT, " +
-                             "balance DOUBLE)");
-
-                stmt.execute("CREATE TABLE IF NOT EXISTS transactions (" +
-                             "id INT AUTO_INCREMENT PRIMARY KEY, " +
-                             "account_id INT, " +
-                             "amount DOUBLE, " +
-                             "type VARCHAR(50), " +
-                             "date DATE)");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
-    }
+      return DriverManager.getConnection(url, username, password);
+   }
+   
 }
