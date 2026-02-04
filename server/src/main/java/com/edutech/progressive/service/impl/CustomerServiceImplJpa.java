@@ -1,93 +1,58 @@
-// package com.edutech.progressive.service.impl;
-
-// import java.sql.SQLException;
-// import java.util.List;
-
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.stereotype.Service;
-
-// import com.edutech.progressive.dao.CustomerDAO;
-// import com.edutech.progressive.entity.Customers;
-// import com.edutech.progressive.repository.CustomerRepository;
-
-// @Service
-// public class CustomerServiceImplJpa {
-
-//     @Autowired
-//     private CustomerRepository custRepo;
-//     public CustomerServiceImplJpa(CustomerRepository custRepo) {
-//         this.custRepo = custRepo;
-//     }
-
-//     public List<Customers> getAllCustomers() throws SQLException {
-//         return custRepo.findAll();
-//     }
-
-//     public Customers getCustomerById(int customerId) throws SQLException {
-//         return custRepo.findByCustomerId(customerId);
-//     }
-
-//     public int addCustomer(Customers customers) throws SQLException {
-//         return custRepo.save(customers).getCustomerId();
-//     }
-
-//     public void updateCustomer(Customers customers) throws SQLException {
-//         custRepo.save(customers);
-//     }
-
-//     public void deleteCustomer(int customerId) throws SQLException {
-//         custRepo.deleteByCustomerId(customerId);
-//     }
-
-//     public List<Customers> getAllCustomersSortedByName() throws SQLException {
-//         List<Customers> list = custRepo.findAll();
-//         list.sort(Customers::compareTo);
-//         return list;
-//     }
-// }
-
-
 package com.edutech.progressive.service.impl;
 
-import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.edutech.progressive.entity.Customers;
 import com.edutech.progressive.repository.CustomerRepository;
 import com.edutech.progressive.service.CustomerService;
 
 @Service
-public class CustomerServiceImplJpa implements CustomerService{
+public class CustomerServiceImplJpa implements CustomerService {
+    @Autowired
+    private CustomerRepository cr;
 
-    private final CustomerRepository custRepo;
-    public CustomerServiceImplJpa(CustomerRepository custRepo) {
-        this.custRepo = custRepo;
+    public CustomerServiceImplJpa(CustomerRepository cr) {
+        this.cr = cr;
     }
+
     @Override
-    public List<Customers> getAllCustomers() throws SQLException {
-        return custRepo.findAll();
+    public List<Customers> getAllCustomers() {
+        return cr.findAll();
     }
+
+    public Customers getCustomerById(int customerId) {
+        return cr.findByCustomerId(customerId);
+    }
+
     @Override
-    public Customers getCustomerById(int customerId) throws SQLException {
-        return custRepo.findByCustomerId(customerId);
+    public int addCustomer(Customers customers) {
+        try {
+            return cr.save(customers).getCustomerId();
+        } catch (Exception e) {
+            return -1;
+        }
     }
+
+    public void updateCustomer(Customers customers) {
+        if (customers == null || !cr.existsById(customers.getCustomerId())) {
+            return;
+        }
+        cr.save(customers).getCustomerId();
+    }
+
+    public void deleteCustomer(int customerId) {
+        cr.deleteById(customerId);
+    }
+
     @Override
-    public int addCustomer(Customers customers) throws SQLException {
-        return custRepo.save(customers).getCustomerId();
+    public List<Customers> getAllCustomersSortedByName() {
+        List<Customers> ans = cr.findAll();
+        Collections.sort(ans);
+        return ans;
     }
-    @Override
-    public void updateCustomer(Customers customers) throws SQLException {
-        custRepo.save(customers);
-    }
-    @Override
-    public void deleteCustomer(int customerId) throws SQLException {
-        custRepo.deleteByCustomerId(customerId);
-    }
-    @Override
-    public List<Customers> getAllCustomersSortedByName() throws SQLException {
-        List<Customers> list = custRepo.findAll();
-        list.sort(Customers::compareTo);
-        return list;
-    }
+
 }
