@@ -1,34 +1,34 @@
 package com.edutech.progressive.service.impl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.edutech.progressive.entity.Accounts;
+import com.edutech.progressive.service.AccountService;
 
-public class AccountServiceImplArraylist {
+public class AccountServiceImplArraylist implements AccountService {
+    private static List<Accounts> accountsList = new ArrayList<>();
 
-    private static List<Accounts> accountsList;
-
-    public AccountServiceImplArraylist() {
-        accountsList = new ArrayList<>();
-    }
-
-    public List<Accounts> getAllAccounts() {
+    @Override
+    public List<Accounts> getAllAccounts() throws SQLException {
         return accountsList;
     }
 
-    public List<Accounts> getAllAccountsSortedByBalance() {
-        accountsList.sort((a, b) ->
-                Double.compare(a.getBalance(), b.getBalance()));
-        return accountsList;
-    }
-
-    public int addAccount(Accounts accounts) {
+    @Override
+    public int addAccount(Accounts accounts) throws SQLException {
         accountsList.add(accounts);
         return accountsList.size();
     }
 
+    @Override
+    public List<Accounts> getAllAccountsSortedByBalance() throws SQLException {
+        Collections.sort(accountsList);
+        return accountsList;
+    }
+
     public void emptyArrayList() {
-        accountsList.clear();
+        accountsList = new ArrayList<>();
     }
 }
