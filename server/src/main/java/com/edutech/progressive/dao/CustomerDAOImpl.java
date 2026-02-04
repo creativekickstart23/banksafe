@@ -1,122 +1,77 @@
 package com.edutech.progressive.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.*;
+import java.util.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.stereotype.Repository;
 
 import com.edutech.progressive.config.DatabaseConnectionManager;
 import com.edutech.progressive.dto.CustomerAccountInfo;
 import com.edutech.progressive.entity.Customers;
+import com.edutech.progressive.repository.CustomerRepository;
 
-public class CustomerDAOImpl implements CustomerDAO{
+@Repository
+public class CustomerDAOImpl implements CustomerDAO {
+    @Autowired
+    CustomerRepository cr;
+    public Connection connection;
 
-    private Connection connection;
-    public CustomerDAOImpl(){
+    public CustomerDAOImpl() {
         try {
             connection = DatabaseConnectionManager.getConnection();
-        } catch (SQLException e) {
-             e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
-    public int addCustomer(Customers customer) throws SQLException {
-           String sql="INSERT INTO customers (name,email,username,password) VALUES(?,?,?,?) ";
-        PreparedStatement ps = connection.prepareStatement(sql,Statement.RETURN_GENERATED_KEYS);
-        ps.setString(1, customer.getName());
-        ps.setString(2,customer.getEmail());
-        ps.setString(3,customer.getUsername());
-        ps.setString(4,customer.getPassword());
-        // ps.setString(5, customer.getRole());
-        ps.executeUpdate();
-        ResultSet rs = ps.getGeneratedKeys();
-        if(rs.next()){
-            return rs.getInt(1);
+    public List<Customers> getAllCustomers() {
+        return cr.findAll();
+    }
+
+    @Override
+    public Customers getCustomerById(int customerId) {
+        return cr.findById(customerId).orElse(null);
+    }
+
+    @Modifying
+    @Override
+    public int addCustomer(Customers customers) {
+        return cr.save(customers).getCustomerId();
+    }
+
+    @Modifying
+    @Override
+    public void updateCustomer(Customers customers) {
+        if (cr.existsById(customers.getCustomerId())) {
+            cr.save(customers);
         }
-        
-        return -1;   
-        
     }
 
+    @Modifying
     @Override
-    public Customers getCustomerById(int customerId) throws SQLException {
-        // TODO Auto-generated method setDouble
-        String sql="SELECT * FROM customers WHERE customer_id=?";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setInt(1, customerId);
-        ResultSet rs = ps.executeQuery();
-        if(rs.next()){
-            return new Customers(rs.getInt("customer_id"), rs.getString("name"), rs.getString("email"), rs.getString("username"), rs.getString("password"));
+    public void deleteCustomer(int customerId) {
+        if (cr.existsById(customerId)) {
+            cr.deleteById(customerId);
         }
-        return null;
-
-
-
-    }
-
-    @Override
-    public void updateCustomer(Customers customers) throws SQLException {
-        String sql="UPDATE customers SET name=?,email=?,username=?,password=? WHERE customer_id=?";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setString(1, customers.getName());
-        ps.setString(2,customers.getEmail());
-        ps.setString(3,customers.getUsername());
-        ps.setString(4,customers.getPassword());
-        ps.setInt(5, customers.getCustomerId());
-        // ps.setString(5, customer.getRole());
-        ps.executeUpdate();
-        
-    }
-
-    @Override
-    public void deleteCustomer(int customerId) throws SQLException {
-        // TODO Auto-generated method setDouble
-        String sql="DELETE FROM customers WHERE customer_id=?";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ps.setInt(1,customerId);
-        ps.executeUpdate();
-
-    }
-
-    @Override
-    public List<Customers> getAllCustomers() throws SQLException {
-        // TODO Auto-generated method setDouble
-        List<Customers> list = new ArrayList<>();
-        String sql="SELECT * FROM customers";
-        PreparedStatement ps = connection.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
-        while(rs.next()){
-            Customers cust = new  Customers(rs.getInt("customer_id"), rs.getString("name"), rs.getString("email"), rs.getString("username"), rs.getString("password"));
-            list.add(cust);
-        }
-        return list;
-        
-
     }
 
     @Override
     public CustomerAccountInfo getCustomerAccountInfo(int customerId) throws SQLException {
-        // TODO Auto-generated method setDouble
-        String sql="SELECT c.customer_id , c.name,c.email,a.account_id,a.balance " + 
-        "FROM customers c JOIN  accounts a ON c.customer_id = a.customer_id " +
-        "WHERE c.customer_id=?"
-        ;
-        PreparedStatement ps = connection.prepareStatement(sql);
+        String sql = "SELECT c.customer_id, c.name, c.email, a.account_id, a.balance FROM customers c LEFT JOIN accounts a ON c.customer_id = a.customer_id WHERE c.customer_id = ?";
+        PreparedStatement ps = DatabaseConnectionManager.getConnection().prepareStatement(sql);
         ps.setInt(1, customerId);
         ResultSet rs = ps.executeQuery();
-        if(rs.next()){
-            return new  CustomerAccountInfo(rs.getInt("customer_id"), rs.getString("name"), rs.getString("email"), rs.getInt("account_id"),rs.getDouble("balance"));
-            // list.add(cust);
+        if (rs.next()) {
+            String name = rs.getString("name");
+            String email = rs.getString("email");
+            int account_id = rs.getInt("account_id");
+            double balance = rs.getDouble("balance");
+            return new CustomerAccountInfo(customerId, name, email, account_id, balance);
         }
         return null;
-
-        
     }
-
-
 
 }
