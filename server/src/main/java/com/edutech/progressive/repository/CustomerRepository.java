@@ -8,6 +8,6 @@ import com.edutech.progressive.entity.Customers;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customers,Integer> {
 
-    public Customers findByCustomerId(int customerId);
-    public void deleteByCustomerId(int customerId);
+    Customers findByCustomerId(int customerId);
+    void deleteByCustomerId(int customerId);
 }

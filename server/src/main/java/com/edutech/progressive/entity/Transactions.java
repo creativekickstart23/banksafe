@@ -1,5 +1,6 @@
 package com.edutech.progressive.entity;
 
+import java.sql.Timestamp;
 import java.util.Date;
 
 public class Transactions {
@@ -9,7 +10,7 @@ public class Transactions {
     private String transactionType;
     private Date transactionDate;
 
-    public Transactions() {
+    public Transactions(int i, int j, double d, Timestamp timestamp, String string) {
     }
 
     public Transactions(int transactionId, int accountId, double amount, String transactionType, Date transactionDate) {
@@ -18,16 +19,6 @@ public class Transactions {
         this.amount = amount;
         this.transactionType = transactionType;
         this.transactionDate = transactionDate;
-    }
-
-    // Added: match tests that pass java.util.Date then String
-    public Transactions(int transactionId, int accountId, double amount, Date transactionDate, String transactionType) {
-        this(transactionId, accountId, amount, transactionType, transactionDate);
-    }
-
-    // Implemented: constructor that accepts java.sql.Date
-    public Transactions(int transactionId, int accountId, double amount, java.sql.Date date, String transactionType) {
-        this(transactionId, accountId, amount, transactionType, new Date(date.getTime()));
     }
 
     public int getTransactionId() {

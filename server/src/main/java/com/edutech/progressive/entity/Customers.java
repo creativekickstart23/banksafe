@@ -54,6 +54,6 @@ public class Customers implements Comparable<Customers>{
     }
     @Override
     public int compareTo(Customers otherCustomers) {
-        return this.getName().compareTo(otherCustomers.getName());
+        return this.name.compareToIgnoreCase(otherCustomers.name);
     }
 }
