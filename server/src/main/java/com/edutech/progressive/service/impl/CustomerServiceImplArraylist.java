@@ -1,31 +1,37 @@
 package com.edutech.progressive.service.impl;
 
-import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.edutech.progressive.entity.Customers;
+import com.edutech.progressive.service.CustomerService;
 
-public class CustomerServiceImplArraylist {
-
+@Service
+public class CustomerServiceImplArraylist implements CustomerService {
     private static List<Customers> customersList = new ArrayList<>();
 
-    public List<Customers> getAllCustomers() throws SQLException {
+    @Override
+    public List<Customers> getAllCustomers() {
         return customersList;
     }
 
-    public int addCustomer(Customers customers) throws SQLException {
+    @Override
+    public int addCustomer(Customers customers) {
         customersList.add(customers);
         return customersList.size();
     }
 
-    public List<Customers> getAllCustomersSortedByName() throws SQLException {
-        customersList.sort((a, b) ->
-                a.getName().compareToIgnoreCase(b.getName()));
+    @Override
+    public List<Customers> getAllCustomersSortedByName() {
+        Collections.sort(customersList);
         return customersList;
     }
 
     public void emptyArrayList() {
-        customersList.clear();
+        customersList = new ArrayList<>();
     }
+
 }
